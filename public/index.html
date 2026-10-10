@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#3f0e40" />
+  <title>Chat</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <section id="join-screen" class="join-screen">
+    <form id="join-form" class="join-card">
+      <p class="eyebrow">Chat room</p>
+      <h1>Join #general</h1>
+      <p class="lede">Pick an id. Everyone in the room sees it on your messages.</p>
+      <label for="user-id">Your id</label>
+      <input
+        id="user-id"
+        name="userId"
+        maxlength="24"
+        autocomplete="username"
+        spellcheck="false"
+        required
+      />
+      <p id="join-error" class="error" role="alert"></p>
+      <div class="join-actions">
+        <button id="new-id" class="ghost" type="button">New id</button>
+        <button type="submit">Join room</button>
+      </div>
+    </form>
+  </section>
+
+  <div id="app" class="app" hidden>
+    <aside class="sidebar">
+      <div class="workspace">
+        <span class="workspace-mark" aria-hidden="true">C</span>
+        <div>
+          <p class="workspace-name">Chat</p>
+          <p class="workspace-you">Signed in as <strong id="you"></strong></p>
+        </div>
+      </div>
+      <nav class="channels" aria-label="Channels">
+        <p class="section-label">Channels</p>
+        <p class="channel" aria-current="page"><span aria-hidden="true">#</span> general</p>
+      </nav>
+      <section class="members" aria-labelledby="members-label">
+        <h2 id="members-label" class="section-label">Members</h2>
+        <ul id="member-list"></ul>
+      </section>
+      <button id="leave" class="leave" type="button">Leave room</button>
+    </aside>
+
+    <main class="room">
+      <header class="room-header">
+        <div>
+          <h2># general</h2>
+          <p id="member-count">0 members</p>
+        </div>
+      </header>
+      <div id="banner" class="banner" hidden>
+        <p>Connection lost.</p>
+        <button id="rejoin" type="button">Rejoin</button>
+      </div>
+      <div id="log-wrap" class="log-wrap">
+        <ol id="log" class="log"></ol>
+      </div>
+      <form id="composer" class="composer">
+        <label class="sr-only" for="message">Message #general</label>
+        <textarea id="message" rows="1" maxlength="2000" placeholder="Message #general"></textarea>
+        <button id="send" type="submit" disabled>Send</button>
+        <p id="compose-error" class="error" role="alert"></p>
+      </form>
+    </main>
+  </div>
+  <p id="live" class="sr-only" aria-live="polite"></p>
+  <script src="client.js"></script>
+</body>
+</html>
