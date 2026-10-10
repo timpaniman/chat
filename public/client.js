@@ -173,16 +173,20 @@ function render() {
 function renderMembers() {
   const count = members.length;
   memberCount.textContent = count === 1 ? "1 member" : `${count} members`;
+  const ordered = members.filter((id) => id !== userId);
+  if (members.includes(userId)) ordered.unshift(userId);
   memberList.replaceChildren();
-  for (const id of members) {
+  for (const id of ordered) {
     const item = document.createElement("li");
     const dot = document.createElement("span");
     dot.className = "presence";
     dot.setAttribute("aria-hidden", "true");
     const name = document.createElement("span");
+    name.className = "member-name";
     name.textContent = id;
     item.append(dot, name);
     if (id === userId) {
+      item.classList.add("is-you");
       const tag = document.createElement("span");
       tag.className = "you-tag";
       tag.textContent = "you";
@@ -201,7 +205,7 @@ function renderLog() {
     const empty = document.createElement("li");
     empty.className = "empty";
     const title = document.createElement("h3");
-    title.textContent = "This is the very beginning of #general";
+    title.textContent = "This is the very beginning of Private Chat";
     const copy = document.createElement("p");
     copy.textContent = "Messages sent here show up for everyone in the room.";
     empty.append(title, copy);
@@ -235,8 +239,9 @@ function renderLog() {
       entry.ts - previousChat.ts < GROUP_WINDOW &&
       dayKey(previousChat.ts) === day;
 
+    const side = entry.userId === userId ? "mine" : "theirs";
     const item = document.createElement("li");
-    item.className = grouped ? "message compact" : "message full";
+    item.className = `message ${grouped ? "compact" : "full"} ${side}`;
 
     if (!grouped) {
       const avatar = document.createElement("span");
@@ -246,6 +251,7 @@ function renderLog() {
       avatar.setAttribute("aria-hidden", "true");
 
       const content = document.createElement("div");
+      content.className = "content";
       const meta = document.createElement("div");
       meta.className = "meta";
       const name = document.createElement("span");
@@ -260,7 +266,10 @@ function renderLog() {
       body.className = "body";
       body.textContent = entry.text;
       content.append(meta, body);
-      item.append(avatar, content);
+      const cluster = document.createElement("div");
+      cluster.className = "cluster";
+      cluster.append(avatar, content);
+      item.append(cluster);
     } else {
       const body = document.createElement("p");
       body.className = "body";

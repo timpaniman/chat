@@ -238,15 +238,20 @@ public class ChatRoomServer
         }
 
         string error = null;
+        WebSocket previous = null;
+        bool alreadyActive = false;
         lock (Sync)
         {
             if (Ids.ContainsKey(socket))
             {
                 error = "You are already in the room.";
             }
-            else if (Members.ContainsKey(userId))
+            else if (Members.TryGetValue(userId, out previous))
             {
-                error = "That id is already in the room.";
+                alreadyActive = true;
+                Ids.Remove(previous);
+                Members[userId] = socket;
+                Ids[socket] = userId;
             }
             else
             {
@@ -261,8 +266,17 @@ public class ChatRoomServer
             return;
         }
 
+        if (previous != null)
+        {
+            try { previous.Abort(); }
+            catch (Exception) { }
+        }
+
         await Send(socket, Welcome(userId));
-        await Broadcast(Event("join", userId), socket);
+        if (!alreadyActive)
+        {
+            await Broadcast(Event("join", userId), socket);
+        }
     }
 
     static async Task Leave(WebSocket socket)
